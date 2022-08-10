@@ -22,11 +22,22 @@ keymap("n", "<C-j>", "<C-w>j", opts)
 keymap("n", "<C-k>", "<C-w>k", opts)
 keymap("n", "<C-l>", "<C-w>l", opts)
 
+
+-- Auto-center
+keymap("n", "G", "Gzz", opts)
+keymap("n", "N", "Nzz", opts)
+keymap("n", "n", "nzz", opts)
+keymap("n", "{", "{zz", opts)
+keymap("n", "}", "}zz", opts)
+
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize -2<CR>", opts)
 keymap("n", "<C-Down>", ":resize +2<CR>", opts)
 keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
 keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
+
+-- Remove trailing whitespace on <leader>S 
+keymap("n", "<leader>S", ":%s/\\s\\+$//<cr>:let @/=''<CR>", opts)
 
 -- Navigate buffers
 keymap("n", "<S-l>", ":bnext<CR>", opts)
@@ -62,7 +73,10 @@ keymap("n", "<leader>fp", ":Telescope projects<CR>", opts)
 keymap("n", "<leader>fb", ":Telescope buffers<CR>", opts)
 
 -- Git
-keymap("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", opts)
+keymap("n", "<leader>g", ":Git<CR>", opts)
+
+-- Tagbar
+keymap("n", "<leader>t", ":TagbarToggle<CR>", opts)
 
 -- Comment
 keymap("n", "<leader>/", "<cmd>lua require('Comment.api').toggle_current_linewise()<CR>", opts)
