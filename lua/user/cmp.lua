@@ -4,6 +4,7 @@ if not cmp_status_ok then
 end
 
 local snip_status_ok, luasnip = pcall(require, "luasnip")
+local select_opts = {behavior = cmp.SelectBehavior.Select}
 if not snip_status_ok then
 	return
 end
@@ -44,74 +45,64 @@ local kind_icons = {
 }
 
 cmp.setup({
-	snippet = {
-		expand = function(args)
-			luasnip.lsp_expand(args.body) -- For `luasnip` users.
-		end,
-	},
+	-- snippet = {
+	-- 	expand = function(args)
+	-- 		luasnip.lsp_expand(args.body) -- For `luasnip` users.
+	-- 	end,
+	-- },
 
 	mapping = cmp.mapping.preset.insert({
 		["<C-k>"] = cmp.mapping.select_prev_item(),
 		["<C-j>"] = cmp.mapping.select_next_item(),
 		["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-1), { "i", "c" }),
 		["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(1), { "i", "c" }),
-		["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
 		["<C-e>"] = cmp.mapping({
 			i = cmp.mapping.abort(),
 			c = cmp.mapping.close(),
 		}),
 		-- Accept currently selected item. If none selected, `select` first item.
 		-- Set `select` to `false` to only confirm explicitly selected items.
-		["<CR>"] = cmp.mapping.confirm({ select = true }),
-		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item()
-			elseif luasnip.expandable() then
-				luasnip.expand()
-			elseif luasnip.expand_or_jumpable() then
-				luasnip.expand_or_jump()
-			elseif check_backspace() then
-				fallback()
-			else
-				fallback()
-			end
-		end, {
-			"i",
-			"s",
-		}),
-		["<S-Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			elseif luasnip.jumpable(-1) then
-				luasnip.jump(-1)
-			else
-				fallback()
-			end
-		end, {
-			"i",
-			"s",
-		}),
+		["<C-y>"] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            local col = vim.fn.col('.') - 1
+            if cmp.visible() then
+                cmp.select_next_item(select_opts)
+            elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s')
+            then
+                fallback()
+            else
+                cmp.complete()
+            end
+        end, {'i', 's'}),
+
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item(select_opts)
+          else
+            fallback()
+          end
+        end, {'i', 's'}),
 	}),
 	formatting = {
 		fields = { "kind", "abbr", "menu" },
 		format = function(entry, vim_item)
 			vim_item.kind = kind_icons[vim_item.kind]
 			vim_item.menu = ({
-				nvim_lsp = "",
+				nvim_lsp = "[LSP]",
 				nvim_lua = "",
 				luasnip = "",
-				buffer = "",
-				path = "",
+				buffer = "[BUF]",
+				path = "[PATH]",
 				emoji = "",
 			})[entry.source.name]
 			return vim_item
 		end,
 	},
 	sources = {
-		{ name = "nvim_lsp" },
-		{ name = "nvim_lua" },
-		{ name = "luasnip" },
-		{ name = "buffer" },
+		{ name = "nvim_lsp", keyword_length = math.huge},
+		-- { name = "nvim_lua" },
+		-- { name = "luasnip" },
+		{ name = "buffer" , keyword_lengh = math.huge},
 		{ name = "path" },
 	},
 	confirm_opts = {
