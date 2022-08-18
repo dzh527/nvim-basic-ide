@@ -66,7 +66,8 @@ cmp.setup({
         ['<Tab>'] = cmp.mapping(function(fallback)
             local col = vim.fn.col('.') - 1
             if cmp.visible() then
-                cmp.select_next_item(select_opts)
+                -- cmp.select_next_item(select_opts)
+                cmp.select_next_item()
             elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s')
             then
                 fallback()
@@ -77,7 +78,8 @@ cmp.setup({
 
         ['<S-Tab>'] = cmp.mapping(function(fallback)
           if cmp.visible() then
-            cmp.select_prev_item(select_opts)
+            -- cmp.select_prev_item(select_opts)
+            cmp.select_prev_item()
           else
             fallback()
           end
@@ -99,10 +101,10 @@ cmp.setup({
 		end,
 	},
 	sources = {
-		{ name = "nvim_lsp", keyword_length = math.huge},
+		{ name = "nvim_lsp", keyword_length = 3},
 		-- { name = "nvim_lua" },
 		-- { name = "luasnip" },
-		{ name = "buffer" , keyword_lengh = math.huge},
+		-- { name = "buffer" , keyword_lengh = 5},
 		{ name = "path" },
 	},
 	confirm_opts = {
